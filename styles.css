@@ -133,4 +133,34 @@ h2 {
 }
 
 .tool-card h3 {
-  margin: 0 
+  margin: 0 0 8px;
+}
+
+.tool-card p {
+  line-height: 1.4;
+}
+
+form {
+  display: grid;
+  gap: 12px;
+  max-width: 560px;
+}
+
+input,
+textarea {
+  padding: 14px;
+  font-size: 16px;
+  border: 1px solid #cfc3af;
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+textarea {
+  min-height: 100px;
+}
+
+#listingPreview,
+#requestPreview {
+  margin-top: 24px;
+  max-width: 360px;
+}
