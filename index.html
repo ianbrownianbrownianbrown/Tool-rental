@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -6,7 +6,6 @@
     <title>HoneyDo</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-
 
   <body>
     <header>
@@ -49,51 +48,26 @@
           <button>Auto</button>
         </div>
 
-        <div class="tool-grid">
-          <article class="tool-card">
-            <div class="tool-image">Drill</div>
-            <h3>Cordless Drill Kit</h3>
-            <p>Eastown · $12/day · $25/weekend</p>
-            <button data-tool="drill">View Tool</button>
-          </article>
-
-            <article class="tool-card">
-            <div class="tool-image">Ladder</div>
-            <h3>Extension Ladder</h3>
-            <p>Alger Heights · $18/day · $40/weekend</p>
-            <button data-tool="ladder">View Tool</button>
-          </article>
-
-          <article class="tool-card">
-            <div class="tool-image">Sander</div>
-           
-            <h3>Floor Sander</h3>
-            <p>Heritage Hill · $35/day · $80/weekend</p>
-            <button data-tool="sander">View Tool</button>
-          </article>
-
-          <article class="tool-card">
-            <div class="tool-image">Auto</div>
-            <h3>OBD2 Scanner</h3>
-            <p>Kentwood · $10/day · $20/weekend</p>
-            <button data-tool="scanner">View Tool</button>
-          </article>
-        </div>
+        <p id="browseStatus" class="status-message" aria-live="polite"></p>
+        <div class="tool-grid"></div>
       </section>
 
-	<section id="list" class="section">
+      <section id="list" class="section">
         <h2>List your tool</h2>
 
-        <form>
+        <form id="listingForm">
           <input id="toolName" type="text" placeholder="Tool name" />
           <input id="toolCategory" type="text" placeholder="Category" />
           <input id="toolNeighborhood" type="text" placeholder="Neighborhood" />
           <input id="toolDailyPrice" type="text" placeholder="Daily price" />
           <input id="toolWeekendPrice" type="text" placeholder="Weekend price" />
+          <input id="ownerName" type="text" placeholder="Your name" />
+          <input id="ownerContact" type="text" placeholder="Best contact for renters" />
           <textarea id="toolDescription" placeholder="Describe the tool and what is included"></textarea>
           <button id="previewListingButton" type="button">Preview Listing</button>
         </form>
 
+        <p id="listingStatus" class="status-message" aria-live="polite"></p>
         <div id="listingPreview"></div>
       </section>
 
@@ -119,6 +93,7 @@
       </section>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="app.js"></script>
   </body>
 </html>

@@ -1,4 +1,4 @@
-body {
+﻿body {
   margin: 0;
   font-family: Arial, sans-serif;
   background: #f7f3ea;
@@ -98,7 +98,7 @@ h2 {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 28px;
+  margin-bottom: 18px;
 }
 
 .categories button {
@@ -120,6 +120,11 @@ h2 {
   padding: 16px;
 }
 
+.shared-listing {
+  border-color: #9ec8ad;
+  box-shadow: inset 0 4px 0 #2f6f4e;
+}
+
 .tool-image {
   height: 120px;
   border-radius: 10px;
@@ -138,6 +143,12 @@ h2 {
 
 .tool-card p {
   line-height: 1.4;
+}
+
+.listing-owner,
+.request-meta {
+  color: #355543;
+  font-weight: bold;
 }
 
 form {
@@ -167,7 +178,7 @@ textarea {
 
 .status-message {
   min-height: 24px;
-  margin: 12px 0 0;
+  margin: 12px 0 18px;
   color: #2f6f4e;
   font-weight: bold;
 }
@@ -189,11 +200,6 @@ textarea {
 
 .request-card {
   border-color: #bfd8c9;
-}
-
-.request-meta {
-  color: #355543;
-  font-weight: bold;
 }
 
 .empty-state {
