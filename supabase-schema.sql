@@ -1,4 +1,4 @@
-﻿-- Run this in the Supabase SQL Editor for the HoneyDo / Tool Rental project.
+﻿-- Run this in the Supabase SQL Editor for the Weekender / Tool Rental project.
 -- It allows this guest prototype to read and create public tool listings.
 
 create table if not exists public.listings (
@@ -29,3 +29,4 @@ create policy "Guests can create listings"
 on public.listings
 for insert
 with check (status = 'available');
+

@@ -1,7 +1,7 @@
 ﻿const SUPABASE_URL = "https://gduefgyrvlreemgbwqwz.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_NHOjLft-27b1keRip9gJCQ_moJFd_IO";
 const LISTINGS_TABLE = "listings";
-const savedRequestKey = "honeyDoRequests";
+const savedRequestKey = "weekenderRequests";
 
 const starterTools = [
   {
