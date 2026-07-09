@@ -100,16 +100,22 @@
       <section id="request" class="section">
         <h2>Post a tool request</h2>
 
-        <form>
+        <form id="requestForm">
           <input id="requestTool" type="text" placeholder="What tool do you need?" />
           <input id="requestDate" type="text" placeholder="When do you need it?" />
           <input id="requestNeighborhood" type="text" placeholder="Neighborhood" />
           <input id="requestBudget" type="text" placeholder="Budget" />
           <textarea id="requestNotes" placeholder="Add any helpful details"></textarea>
-          <button id="postRequestButton" type="button">Post Request</button>
+          <button id="postRequestButton" type="button">Preview Request</button>
         </form>
 
+        <p id="requestStatus" class="status-message" aria-live="polite"></p>
         <div id="requestPreview"></div>
+
+        <div class="request-board">
+          <h3>Open requests</h3>
+          <div id="requestList" class="request-list"></div>
+        </div>
       </section>
     </main>
 
