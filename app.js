@@ -1,6 +1,7 @@
 ﻿const SUPABASE_URL = "https://gduefgyrvlreemgbwqwz.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_NHOjLft-27b1keRip9gJCQ_moJFd_IO";
 const LISTINGS_TABLE = "listings";
+const RENTAL_REQUESTS_TABLE = "rental_requests";
 const savedRequestKey = "weekenderRequests";
 
 const starterTools = [
@@ -69,12 +70,27 @@ const listingPreview = document.querySelector("#listingPreview");
 const listingStatus = document.querySelector("#listingStatus");
 const browseStatus = document.querySelector("#browseStatus");
 const toolGrid = document.querySelector(".tool-grid");
+const rentFlow = document.querySelector("#rentFlow");
+const rentForm = document.querySelector("#rentForm");
+const rentToolName = document.querySelector("#rentToolName");
+const rentSummary = document.querySelector("#rentSummary");
+const rentStatus = document.querySelector("#rentStatus");
+const renterNameInput = document.querySelector("#renterName");
+const renterContactInput = document.querySelector("#renterContact");
+const rentalDatesInput = document.querySelector("#rentalDates");
+const rentalMessageInput = document.querySelector("#rentalMessage");
+const submitRentalButton = document.querySelector("#submitRentalButton");
+const cancelRentalButton = document.querySelector("#cancelRentalButton");
+const rentalRequestList = document.querySelector("#rentalRequestList");
+const rentalDashboardStatus = document.querySelector("#rentalDashboardStatus");
 const requestForm = document.querySelector("#requestForm");
 const requestPreview = document.querySelector("#requestPreview");
 const requestList = document.querySelector("#requestList");
 const requestStatus = document.querySelector("#requestStatus");
 const postedRequests = loadSavedRequests();
 let sharedListings = [];
+let rentalRequests = [];
+let selectedRentalTool = null;
 
 function escapeHtml(value) {
   const entities = {
@@ -135,6 +151,34 @@ function listingToRow(listing) {
   };
 }
 
+function normalizeRentalRequest(row) {
+  return {
+    id: row.id,
+    listingId: row.listing_id,
+    toolName: row.tool_name || "Untitled Tool",
+    ownerName: row.owner_name || "Guest owner",
+    renterName: row.renter_name || "Guest renter",
+    renterContact: row.renter_contact || "Contact not listed",
+    requestedDates: row.requested_dates || "Flexible timing",
+    message: row.message || "No message included.",
+    status: row.status || "pending",
+    createdAt: row.created_at,
+  };
+}
+
+function rentalRequestToRow(request) {
+  return {
+    listing_id: request.listingId || null,
+    tool_name: request.toolName,
+    owner_name: request.ownerName,
+    renter_name: request.renterName,
+    renter_contact: request.renterContact,
+    requested_dates: request.requestedDates,
+    message: request.message,
+    status: "pending",
+  };
+}
+
 function createToolCard(tool) {
   const toolCard = document.createElement("article");
   toolCard.classList.add("tool-card");
@@ -150,13 +194,21 @@ function createToolCard(tool) {
     tool.weekendPrice || "$0/weekend"
   )}</p>
     <p class="listing-owner">Listed by ${escapeHtml(tool.owner || "Guest owner")}</p>
-    <button type="button">View Tool</button>
+    <div class="card-actions">
+      <button class="secondary-button" type="button" data-action="view">View Tool</button>
+      <button type="button" data-action="rent">Rent this tool</button>
+    </div>
   `;
 
-  const viewButton = toolCard.querySelector("button");
+  const viewButton = toolCard.querySelector('[data-action="view"]');
+  const rentButton = toolCard.querySelector('[data-action="rent"]');
 
   viewButton.addEventListener("click", function () {
     showToolDetails(tool);
+  });
+
+  rentButton.addEventListener("click", function () {
+    openRentalFlow(tool);
   });
 
   return toolCard;
@@ -167,6 +219,65 @@ function renderToolGrid() {
 
   starterTools.concat(sharedListings).forEach(function (tool) {
     toolGrid.appendChild(createToolCard(tool));
+  });
+}
+
+function openRentalFlow(tool) {
+  selectedRentalTool = tool;
+  rentFlow.hidden = false;
+  rentToolName.textContent = tool.name || "Untitled Tool";
+  rentSummary.textContent = `${tool.neighborhood || "Grand Rapids"} - ${tool.dailyPrice || "$0/day"} - ${
+    tool.weekendPrice || "$0/weekend"
+  } - Listed by ${tool.owner || "Guest owner"}`;
+  rentStatus.textContent = "No payment info needed. This sends a fake pending request to the owner.";
+  rentalDatesInput.focus();
+}
+
+function closeRentalFlow() {
+  selectedRentalTool = null;
+  rentFlow.hidden = true;
+  rentForm.reset();
+  rentStatus.textContent = "";
+}
+
+function getRentalFormValues() {
+  return {
+    renterName: renterNameInput.value.trim(),
+    renterContact: renterContactInput.value.trim(),
+    requestedDates: rentalDatesInput.value.trim(),
+    message: rentalMessageInput.value.trim(),
+  };
+}
+
+function createRentalRequestCard(request) {
+  const requestCard = document.createElement("article");
+  requestCard.classList.add("tool-card", "rental-request-card");
+
+  requestCard.innerHTML = `
+    <div class="status-pill">${escapeHtml(request.status || "pending")}</div>
+    <h3>${escapeHtml(request.toolName || "Untitled Tool")}</h3>
+    <p class="request-meta">${escapeHtml(request.requestedDates || "Flexible timing")}</p>
+    <p>Renter: ${escapeHtml(request.renterName || "Guest renter")}</p>
+    <p>Contact: ${escapeHtml(request.renterContact || "Contact not listed")}</p>
+    <p>${escapeHtml(request.message || "No message included.")}</p>
+  `;
+
+  return requestCard;
+}
+
+function renderRentalRequestList() {
+  rentalRequestList.innerHTML = "";
+
+  if (rentalRequests.length === 0) {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.classList.add("empty-state");
+    emptyMessage.textContent = "No rental requests yet.";
+    rentalRequestList.appendChild(emptyMessage);
+    return;
+  }
+
+  rentalRequests.forEach(function (request) {
+    rentalRequestList.appendChild(createRentalRequestCard(request));
   });
 }
 
@@ -198,6 +309,33 @@ async function loadSharedListings() {
     : "No shared listings yet. Publish one below.";
 }
 
+async function loadRentalRequests() {
+  renderRentalRequestList();
+
+  if (!supabaseClient) {
+    rentalDashboardStatus.textContent = "Rental requests are unavailable because Supabase did not load.";
+    return;
+  }
+
+  rentalDashboardStatus.textContent = "Loading rental requests...";
+
+  const response = await supabaseClient
+    .from(RENTAL_REQUESTS_TABLE)
+    .select("id, listing_id, tool_name, owner_name, renter_name, renter_contact, requested_dates, message, status, created_at")
+    .order("created_at", { ascending: false });
+
+  if (response.error) {
+    rentalDashboardStatus.textContent = "Rental requests are not ready yet. Add the rental_requests table in Supabase, then refresh.";
+    return;
+  }
+
+  rentalRequests = response.data.map(normalizeRentalRequest);
+  renderRentalRequestList();
+  rentalDashboardStatus.textContent = rentalRequests.length
+    ? `${rentalRequests.length} rental request${rentalRequests.length === 1 ? "" : "s"} loaded.`
+    : "No rental requests yet.";
+}
+
 async function publishListing(listing) {
   if (!supabaseClient) {
     listingStatus.textContent = "Supabase did not load, so this listing could not be shared.";
@@ -222,6 +360,67 @@ async function publishListing(listing) {
   listingForm.reset();
   listingPreview.innerHTML = "";
   listingStatus.textContent = "Your tool is now listed for everyone using the app.";
+}
+
+async function submitRentalRequest() {
+  if (!selectedRentalTool) {
+    rentStatus.textContent = "Pick a tool before sending a rental request.";
+    return;
+  }
+
+  if (!supabaseClient) {
+    rentStatus.textContent = "Supabase did not load, so this rental request could not be shared.";
+    return;
+  }
+
+  const rentalFormValues = getRentalFormValues();
+
+  if (!rentalFormValues.renterName) {
+    rentStatus.textContent = "Add your name before sending the request.";
+    renterNameInput.focus();
+    return;
+  }
+
+  if (!rentalFormValues.renterContact) {
+    rentStatus.textContent = "Add a contact method so the owner can respond.";
+    renterContactInput.focus();
+    return;
+  }
+
+  if (!rentalFormValues.requestedDates) {
+    rentStatus.textContent = "Add when you want to rent the tool.";
+    rentalDatesInput.focus();
+    return;
+  }
+
+  rentStatus.textContent = "Sending rental request...";
+
+  const rentalRequest = {
+    listingId: selectedRentalTool.source === "shared" ? selectedRentalTool.id : null,
+    toolName: selectedRentalTool.name || "Untitled Tool",
+    ownerName: selectedRentalTool.owner || "Guest owner",
+    renterName: rentalFormValues.renterName,
+    renterContact: rentalFormValues.renterContact,
+    requestedDates: rentalFormValues.requestedDates,
+    message: rentalFormValues.message || "No message included.",
+  };
+
+  const response = await supabaseClient
+    .from(RENTAL_REQUESTS_TABLE)
+    .insert(rentalRequestToRow(rentalRequest))
+    .select("id, listing_id, tool_name, owner_name, renter_name, renter_contact, requested_dates, message, status, created_at")
+    .single();
+
+  if (response.error) {
+    rentStatus.textContent = "Could not send yet. Check that the rental_requests table and guest insert policy exist in Supabase.";
+    return;
+  }
+
+  rentalRequests.unshift(normalizeRentalRequest(response.data));
+  renderRentalRequestList();
+  rentForm.reset();
+  rentStatus.textContent = "Request sent. It is marked pending for the owner.";
+  rentalDashboardStatus.textContent = "New rental request added.";
 }
 
 function showToolDetails(tool) {
@@ -400,5 +599,14 @@ postRequestButton.addEventListener("click", function () {
   });
 });
 
+submitRentalButton.addEventListener("click", function () {
+  submitRentalRequest();
+});
+
+cancelRentalButton.addEventListener("click", function () {
+  closeRentalFlow();
+});
+
 loadSharedListings();
+loadRentalRequests();
 renderRequestList();

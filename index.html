@@ -50,6 +50,31 @@
 
         <p id="browseStatus" class="status-message" aria-live="polite"></p>
         <div class="tool-grid"></div>
+
+        <div id="rentFlow" class="rent-flow" hidden>
+          <h3>Request this rental</h3>
+          <p id="rentToolName" class="rent-tool-name"></p>
+          <p id="rentSummary"></p>
+
+          <form id="rentForm">
+            <input id="renterName" type="text" placeholder="Your name" />
+            <input id="renterContact" type="text" placeholder="Best contact for the owner" />
+            <input id="rentalDates" type="text" placeholder="When do you want to rent it?" />
+            <textarea id="rentalMessage" placeholder="Add a note for the owner"></textarea>
+            <div class="form-actions">
+              <button id="submitRentalButton" type="button">Send Rental Request</button>
+              <button id="cancelRentalButton" class="secondary-button" type="button">Cancel</button>
+            </div>
+          </form>
+
+          <p id="rentStatus" class="status-message" aria-live="polite"></p>
+        </div>
+
+        <div class="rental-dashboard">
+          <h3>Rental requests</h3>
+          <p id="rentalDashboardStatus" class="status-message" aria-live="polite"></p>
+          <div id="rentalRequestList" class="request-list"></div>
+        </div>
       </section>
 
       <section id="list" class="section">

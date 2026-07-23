@@ -30,3 +30,30 @@ on public.listings
 for insert
 with check (status = 'available');
 
+create table if not exists public.rental_requests (
+  id uuid primary key default gen_random_uuid(),
+  listing_id uuid references public.listings(id) on delete set null,
+  tool_name text not null,
+  owner_name text,
+  renter_name text not null,
+  renter_contact text not null,
+  requested_dates text not null,
+  message text,
+  status text not null default 'pending',
+  created_at timestamptz not null default now()
+);
+
+alter table public.rental_requests enable row level security;
+
+drop policy if exists "Anyone can read rental requests" on public.rental_requests;
+create policy "Anyone can read rental requests"
+on public.rental_requests
+for select
+using (true);
+
+drop policy if exists "Guests can create rental requests" on public.rental_requests;
+create policy "Guests can create rental requests"
+on public.rental_requests
+for insert
+with check (status = 'pending');
+
