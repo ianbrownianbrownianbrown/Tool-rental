@@ -1,99 +1,74 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weekender</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-
-  <body>
-    <header>
-      <div class="logo">Weekender</div>
-
-      <nav>
-        <a href="#browse">Browse</a>
-        <a href="#list">List a Tool</a>
-        <a href="#request">Post a Request</a>
-      </nav>
-    </header>
-
-    <main>
-      <section class="hero">
-        <div>
-          <p class="eyebrow">Grand Rapids tool rentals</p>
-          <h1>Rent the tool you need for the weekend.</h1>
-          <p>
-            Weekender helps Grand Rapids homeowners, hobbyists, and weekend DIYers
-            rent tools from people nearby.
-          </p>
-
-          <div class="search-box">
-            <input type="text" placeholder="What tool do you need?" />
-            <button>Search</button>
-          </div>
-        </div>
-      </section>
-
-      <section id="browse" class="section">
-        <h2>Browse tools near Grand Rapids</h2>
-
-        <div class="categories">
-          <button>Power tools</button>
-          <button>Ladders</button>
-          <button>Lawn & garden</button>
-          <button>Painting & drywall</button>
-          <button>Moving & hauling</button>
-          <button>Specialty</button>
-          <button>Auto</button>
-        </div>
-
-        <p id="browseStatus" class="status-message" aria-live="polite"></p>
-        <div class="tool-grid"></div>
-      </section>
-
-      <section id="list" class="section">
-        <h2>List your tool</h2>
-
-        <form id="listingForm">
-          <input id="toolName" type="text" placeholder="Tool name" />
-          <input id="toolCategory" type="text" placeholder="Category" />
-          <input id="toolNeighborhood" type="text" placeholder="Neighborhood" />
-          <input id="toolDailyPrice" type="text" placeholder="Daily price" />
-          <input id="toolWeekendPrice" type="text" placeholder="Weekend price" />
-          <input id="ownerName" type="text" placeholder="Your name" />
-          <input id="ownerContact" type="text" placeholder="Best contact for renters" />
-          <textarea id="toolDescription" placeholder="Describe the tool and what is included"></textarea>
-          <button id="previewListingButton" type="button">Preview Listing</button>
-        </form>
-
-        <p id="listingStatus" class="status-message" aria-live="polite"></p>
-        <div id="listingPreview"></div>
-      </section>
-
-      <section id="request" class="section">
-        <h2>Post a tool request</h2>
-
-        <form id="requestForm">
-          <input id="requestTool" type="text" placeholder="What tool do you need?" />
-          <input id="requestDate" type="text" placeholder="When do you need it?" />
-          <input id="requestNeighborhood" type="text" placeholder="Neighborhood" />
-          <input id="requestBudget" type="text" placeholder="Budget" />
-          <textarea id="requestNotes" placeholder="Add any helpful details"></textarea>
-          <button id="postRequestButton" type="button">Preview Request</button>
-        </form>
-
-        <p id="requestStatus" class="status-message" aria-live="polite"></p>
-        <div id="requestPreview"></div>
-
-        <div class="request-board">
-          <h3>Open requests</h3>
-          <div id="requestList" class="request-list"></div>
-        </div>
-      </section>
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#244e40" />
+  <meta name="description" content="Borrow tools from neighbors around Grand Rapids. Make something good with Weekender." />
+  <title>Weekender | Tools for weekend projects</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="#browse" aria-label="Weekender home"><span class="brand-mark"><i data-lucide="wrench" aria-hidden="true"></i></span>weekender<span class="brand-dot">.</span></a>
+    <nav aria-label="Main navigation">
+      <a href="#browse" data-route="browse"><i data-lucide="search" aria-hidden="true"></i>Browse tools</a>
+      <a href="#request" data-route="request"><i data-lucide="messages-square" aria-hidden="true"></i>Request board</a>
+    </nav>
+    <div class="header-actions"><a class="button compact" href="#list"><i data-lucide="plus" aria-hidden="true"></i>List a tool</a></div>
+  </header>
+  <div class="test-banner"><i data-lucide="flask-conical" aria-hidden="true"></i><span>Weekender is a prototype. No payments are collected.</span></div>
+  <div id="browseMasthead" class="browse-masthead">
+    <img class="masthead-image" src="assets/workbench.png" alt="" fetchpriority="high" />
+    <div class="masthead-inner">
+      <p class="eyebrow"><i data-lucide="map-pin" aria-hidden="true"></i>Grand Rapids, Michigan</p>
+      <h1>Tools for<br />weekend projects.</h1>
+      <p class="masthead-subtitle">Borrow from a neighbor. Make something good.</p>
+    </div>
+  </div>
+  <main id="main" tabindex="-1">
+    <section id="browse" class="page" aria-labelledby="browseTitle">
+      <div class="page-heading browse-heading"><div><p class="eyebrow">The neighborhood toolbox</p><h2 id="browseTitle">Find the right tool</h2></div></div>
+      <form id="searchForm" class="browse-filters" role="search">
+        <label class="search-input"><i data-lucide="search" aria-hidden="true"></i><span class="sr-only">Search tools or neighborhoods</span><input id="searchInput" type="search" placeholder="Search tools or neighborhoods" /></label>
+        <label><span class="sr-only">Category</span><select id="categoryFilter"><option value="">All categories</option><option>Power tools</option><option>Ladders</option><option>Lawn &amp; garden</option><option>Painting &amp; drywall</option><option>Moving &amp; hauling</option><option>Specialty</option><option>Auto</option></select></label>
+        <label><span class="sr-only">Sort tools</span><select id="sortFilter"><option value="default">Featured first</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></label>
+      </form>
+      <p id="browseStatus" class="status-message" aria-live="polite"></p>
+      <div class="tool-grid"></div>
+      <p id="noMatches" class="empty-state" hidden>No matching tools. Try another search or category.</p>
+    </section>
+    <section id="list" class="page form-page" aria-labelledby="listingTitle">
+      <div class="page-heading"><div><p class="eyebrow">Put your tools to work</p><h1 id="listingTitle">List your tool</h1></div></div>
+      <form id="listingForm" class="form-fields">
+        <label>Tool name<input id="toolName" type="text" placeholder="e.g. Cordless drill kit" /></label>
+        <div class="field-row"><label>Category<input id="toolCategory" type="text" placeholder="e.g. Power tools" /></label><label>Neighborhood<input id="toolNeighborhood" type="text" placeholder="e.g. Eastown" /></label></div>
+        <div class="field-row"><label>Daily price<input id="toolDailyPrice" type="text" placeholder="$12/day" /></label><label>Weekend price<input id="toolWeekendPrice" type="text" placeholder="$25/weekend" /></label></div>
+        <div class="field-row"><label>Your name<input id="ownerName" type="text" autocomplete="name" /></label><label>Contact for renters<input id="ownerContact" type="text" placeholder="Email or phone" /></label></div>
+        <label>Description &amp; what's included<textarea id="toolDescription" placeholder="Condition, included accessories, and anything a renter should know." rows="5"></textarea></label>
+        <button id="previewListingButton" type="button">Review listing<i data-lucide="arrow-right" aria-hidden="true"></i></button>
+      </form>
+      <p id="listingStatus" class="status-message" aria-live="polite"></p>
+      <div id="listingPreview"></div>
+    </section>
+    <section id="request" class="page form-page" aria-labelledby="requestTitle">
+      <div class="page-heading"><div><p class="eyebrow">What the neighborhood needs</p><h1 id="requestTitle">Post a tool request</h1></div></div>
+      <form id="requestForm" class="form-fields">
+        <label>Tool needed<input id="requestTool" type="text" placeholder="e.g. Pressure washer" /></label>
+        <div class="field-row"><label>When do you need it?<input id="requestDate" type="text" placeholder="e.g. This Saturday" /></label><label>Neighborhood<input id="requestNeighborhood" type="text" placeholder="e.g. Eastown" /></label></div>
+        <label>Budget<input id="requestBudget" type="text" placeholder="e.g. $40 for the weekend" /></label>
+        <label>Details<textarea id="requestNotes" placeholder="Tell us about your project." rows="4"></textarea></label>
+        <button id="postRequestButton" type="button">Review request<i data-lucide="arrow-right" aria-hidden="true"></i></button>
+      </form>
+      <p id="requestStatus" class="status-message" aria-live="polite"></p><div id="requestPreview"></div>
+      <div class="request-board"><h2>Open requests</h2><div id="requestList" class="request-list"></div></div>
+    </section>
+  </main>
+  <footer><span class="footer-brand">weekender.</span><span>Good tools. Shared locally.</span><span>Grand Rapids, Michigan</span></footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="vendor/lucide.js"></script>
+  <script src="app.js"></script>
+  <script src="visual.js"></script>
+</body>
 </html>
