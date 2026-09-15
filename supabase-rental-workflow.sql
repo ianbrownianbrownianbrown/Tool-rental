@@ -1,11 +1,5 @@
-﻿-- Run this in the Supabase SQL Editor for the Weekender / Tool Rental project.
--- Existing rows are preserved. Enable anonymous sign-ins separately.
+-- Weekender rental workflow. Run after supabase-schema.sql. Existing rows are preserved.
 begin;
-create table if not exists public.listings (
-  id uuid primary key default gen_random_uuid(), tool_name text not null, category text, neighborhood text,
-  daily_price text, weekend_price text, deposit text, description text, owner_name text, owner_contact text,
-  status text not null default 'available', created_at timestamptz not null default now()
-);
 create table if not exists public.rental_requests (
   id uuid primary key default gen_random_uuid(), listing_id uuid references public.listings(id) on delete set null,
   tool_name text not null, owner_name text, renter_name text not null, renter_contact text not null,
@@ -197,4 +191,3 @@ drop policy if exists "Guests read own tool photo objects" on storage.objects;
 create policy "Guests read own tool photo objects" on storage.objects for select to authenticated using (bucket_id='tool-photos' and (storage.foldername(name))[1]=(select auth.uid())::text);
 notify pgrst,'reload schema';
 commit;
-

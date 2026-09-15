@@ -1,124 +1,135 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weekender</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-
-  <body>
-    <header>
-      <div class="logo">Weekender</div>
-
-      <nav>
-        <a href="#browse">Browse</a>
-        <a href="#list">List a Tool</a>
-        <a href="#request">Post a Request</a>
-      </nav>
-    </header>
-
-    <main>
-      <section class="hero">
-        <div>
-          <p class="eyebrow">Grand Rapids tool rentals</p>
-          <h1>Rent the tool you need for the weekend.</h1>
-          <p>
-            Weekender helps Grand Rapids homeowners, hobbyists, and weekend DIYers
-            rent tools from people nearby.
-          </p>
-
-          <div class="search-box">
-            <input type="text" placeholder="What tool do you need?" />
-            <button>Search</button>
-          </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#235b47" />
+  <meta name="description" content="Tool rentals around Grand Rapids. Borrow what you need. Share what you own." />
+  <title>Weekender | Tools for your next project</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="#browse"><span class="brand-mark"><i data-lucide="wrench" aria-hidden="true"></i></span>weekender<span class="brand-dot">.</span></a>
+    <nav aria-label="Main navigation">
+      <a href="#browse" data-route="browse"><i data-lucide="search" aria-hidden="true"></i>Browse tools</a>
+      <a href="#activity" data-route="activity"><i data-lucide="calendar-days" aria-hidden="true"></i>My activity <span id="activityBadge" class="count" hidden></span></a>
+      <a href="#requests" data-route="requests"><i data-lucide="messages-square" aria-hidden="true"></i>Request board</a>
+    </nav>
+    <div class="header-actions">
+      <a class="button compact" href="#list"><i data-lucide="plus" aria-hidden="true"></i>List a tool</a>
+      <button id="profileButton" class="icon-button" title="Your guest profile" aria-label="Your guest profile"><i data-lucide="user-round" aria-hidden="true"></i></button>
+    </div>
+  </header>
+  <div class="test-banner"><i data-lucide="flask-conical" aria-hidden="true"></i><span>Test rentals. All payments are simulated. No money is charged.</span></div>
+  <div id="browseMasthead" class="browse-masthead">
+    <img class="masthead-image" src="assets/workbench.png" alt="" fetchpriority="high" />
+    <div class="masthead-inner">
+      <p class="eyebrow"><i data-lucide="map-pin" aria-hidden="true"></i>Grand Rapids, Michigan</p>
+      <h1>Tools for<br />weekend projects.</h1>
+      <p class="masthead-subtitle">Borrow from a neighbor. Make something good.</p>
+    </div>
+  </div>
+  <main id="main" tabindex="-1">
+    <p id="globalStatus" class="global-status" role="status" hidden></p>
+    <section id="browse" class="page" aria-labelledby="browseTitle">
+      <div class="page-heading browse-heading"><div><p class="eyebrow">The neighborhood toolbox</p><h2 id="browseTitle">Find the right tool</h2></div><button class="icon-button refresh-button" title="Refresh tools" aria-label="Refresh tools"><i data-lucide="refresh-cw" aria-hidden="true"></i></button></div>
+      <form id="searchForm" class="browse-filters" role="search">
+        <label class="search-input"><i data-lucide="search" aria-hidden="true"></i><span class="sr-only">Search tools or neighborhoods</span><input id="searchInput" type="search" placeholder="Search tools or neighborhoods" maxlength="120" /></label>
+        <label><span class="sr-only">Category</span><select id="categoryFilter"><option value="">All categories</option></select></label>
+        <label><span class="sr-only">Sort tools</span><select id="sortFilter"><option value="newest">Newest first</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option></select></label>
+      </form>
+      <p id="browseStatus" class="status-message" aria-live="polite"></p>
+      <div id="toolGrid" class="tool-grid"></div>
+    </section>
+    <section id="activity" class="page" aria-labelledby="activityTitle" hidden>
+      <div class="page-heading"><div><p id="activityGuest" class="eyebrow">Your guest account</p><h1 id="activityTitle">My activity</h1></div><button class="icon-button refresh-button" title="Refresh activity" aria-label="Refresh activity"><i data-lucide="refresh-cw" aria-hidden="true"></i></button></div>
+      <div class="tabs" role="tablist" aria-label="Activity views">
+        <button id="tab-renting" role="tab" aria-selected="true" aria-controls="activityContent" data-activity="renting">I'm renting</button>
+        <button id="tab-lending" role="tab" aria-selected="false" aria-controls="activityContent" data-activity="lending" tabindex="-1">I'm lending</button>
+        <button id="tab-listings" role="tab" aria-selected="false" aria-controls="activityContent" data-activity="listings" tabindex="-1">My tools</button>
+      </div>
+      <div class="activity-toolbar"><p id="rentalDashboardStatus" class="status-message" aria-live="polite"></p><label><span class="sr-only">Rental status</span><select id="activityFilter"><option value="current">Current rentals</option><option value="all">All rentals</option><option value="past">Past rentals</option></select></label></div>
+      <div id="activityContent" role="tabpanel" aria-labelledby="tab-renting" tabindex="0"></div>
+    </section>
+    <section id="list" class="page form-page" aria-labelledby="listingTitle" hidden>
+      <div class="page-heading"><div><p class="eyebrow">Put your tools to work</p><h1 id="listingTitle">List your tool</h1></div></div>
+      <form id="listingForm" class="listing-layout">
+        <div class="form-fields">
+          <label>Tool name<input id="toolName" required maxlength="120" placeholder="e.g. DeWalt cordless drill kit" /></label>
+          <div class="field-row"><label>Category<select id="toolCategory" required><option value="">Choose a category</option></select></label><label>Neighborhood<input id="toolNeighborhood" required maxlength="100" placeholder="e.g. Eastown" /></label></div>
+          <div class="field-row"><label>Daily price ($)<input id="toolDailyPrice" type="number" min="0.01" max="10000" step="0.01" required inputmode="decimal" placeholder="12.00" /></label><label>Friday-Sunday price ($) <span class="optional">Optional</span><input id="toolWeekendPrice" type="number" min="0.01" max="30000" step="0.01" inputmode="decimal" placeholder="25.00" /></label></div>
+          <label>Description &amp; what's included<textarea id="toolDescription" required maxlength="2000" rows="5" placeholder="Condition, included accessories, and anything a renter should know."></textarea></label>
+          <p id="listingIdentity" class="muted"></p>
+          <div class="form-actions"><button id="previewListingButton" type="submit">Review listing<i data-lucide="arrow-right" aria-hidden="true"></i></button><button id="cancelEditButton" class="secondary-button" type="button" hidden>Cancel edit</button></div>
+          <p id="listingStatus" class="status-message" aria-live="polite"></p>
         </div>
-      </section>
-
-      <section id="browse" class="section">
-        <h2>Browse tools near Grand Rapids</h2>
-
-        <div class="categories">
-          <button>Power tools</button>
-          <button>Ladders</button>
-          <button>Lawn & garden</button>
-          <button>Painting & drywall</button>
-          <button>Moving & hauling</button>
-          <button>Specialty</button>
-          <button>Auto</button>
+        <div class="photo-field">
+          <label for="toolPhoto">Tool photo <span class="optional">Optional</span></label>
+          <div class="photo-preview" id="photoPreview"><i data-lucide="camera" aria-hidden="true"></i><span>No photo selected</span></div>
+          <input id="toolPhoto" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="photoHint" />
+          <p id="photoHint" class="muted small">JPG, PNG, or WebP. Up to 5 MB.</p>
+          <button id="removePhotoButton" type="button" class="text-button" hidden>Remove photo</button>
         </div>
-
-        <p id="browseStatus" class="status-message" aria-live="polite"></p>
-        <div class="tool-grid"></div>
-
-        <div id="rentFlow" class="rent-flow" hidden>
-          <h3>Request this rental</h3>
-          <p id="rentToolName" class="rent-tool-name"></p>
-          <p id="rentSummary"></p>
-
-          <form id="rentForm">
-            <input id="renterName" type="text" placeholder="Your name" />
-            <input id="renterContact" type="text" placeholder="Best contact for the owner" />
-            <input id="rentalDates" type="text" placeholder="When do you want to rent it?" />
-            <textarea id="rentalMessage" placeholder="Add a note for the owner"></textarea>
-            <div class="form-actions">
-              <button id="submitRentalButton" type="button">Send Rental Request</button>
-              <button id="cancelRentalButton" class="secondary-button" type="button">Cancel</button>
-            </div>
-          </form>
-
-          <p id="rentStatus" class="status-message" aria-live="polite"></p>
-        </div>
-
-        <div class="rental-dashboard">
-          <h3>Rental requests</h3>
-          <p id="rentalDashboardStatus" class="status-message" aria-live="polite"></p>
-          <div id="rentalRequestList" class="request-list"></div>
-        </div>
-      </section>
-
-      <section id="list" class="section">
-        <h2>List your tool</h2>
-
-        <form id="listingForm">
-          <input id="toolName" type="text" placeholder="Tool name" />
-          <input id="toolCategory" type="text" placeholder="Category" />
-          <input id="toolNeighborhood" type="text" placeholder="Neighborhood" />
-          <input id="toolDailyPrice" type="text" placeholder="Daily price" />
-          <input id="toolWeekendPrice" type="text" placeholder="Weekend price" />
-          <input id="ownerName" type="text" placeholder="Your name" />
-          <input id="ownerContact" type="text" placeholder="Best contact for renters" />
-          <textarea id="toolDescription" placeholder="Describe the tool and what is included"></textarea>
-          <button id="previewListingButton" type="button">Preview Listing</button>
-        </form>
-
-        <p id="listingStatus" class="status-message" aria-live="polite"></p>
-        <div id="listingPreview"></div>
-      </section>
-
-      <section id="request" class="section">
-        <h2>Post a tool request</h2>
-
-        <form id="requestForm">
-          <input id="requestTool" type="text" placeholder="What tool do you need?" />
-          <input id="requestDate" type="text" placeholder="When do you need it?" />
-          <input id="requestNeighborhood" type="text" placeholder="Neighborhood" />
-          <input id="requestBudget" type="text" placeholder="Budget" />
-          <textarea id="requestNotes" placeholder="Add any helpful details"></textarea>
-          <button id="postRequestButton" type="button">Preview Request</button>
-        </form>
-
-        <p id="requestStatus" class="status-message" aria-live="polite"></p>
-        <div id="requestPreview"></div>
-
-        <div class="request-board">
-          <h3>Open requests</h3>
-          <div id="requestList" class="request-list"></div>
-        </div>
-      </section>
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js"></script>
-  </body>
+      </form>
+    </section>
+    <section id="requests" class="page" aria-labelledby="requestsTitle" hidden>
+      <div class="page-heading"><div><p class="eyebrow">What the neighborhood needs</p><h1 id="requestsTitle">Request board</h1></div><button id="newRequestButton"><i data-lucide="plus" aria-hidden="true"></i>Post a request</button></div>
+      <p id="requestBoardStatus" class="status-message" aria-live="polite"></p>
+      <div id="requestList" class="request-grid"></div>
+    </section>
+  </main>
+  <footer><span class="footer-brand">weekender.</span><span>Good tools. Shared locally.</span><span>Grand Rapids, Michigan</span></footer>
+  <dialog id="profileDialog" aria-labelledby="profileTitle">
+    <div class="dialog-heading"><h2 id="profileTitle">Your guest profile</h2><button class="icon-button" data-close="profileDialog" aria-label="Close guest profile" title="Close"><i data-lucide="x" aria-hidden="true"></i></button></div>
+    <p>Your listings and rentals stay linked to this browser. Use this same browser to manage them later.</p>
+    <form id="profileForm" class="form-fields">
+      <label>Your name<input id="guestName" required maxlength="80" autocomplete="name" /></label>
+      <label>Contact for pickup arrangements<input id="guestContact" required minlength="3" maxlength="200" placeholder="Email or phone" /></label>
+      <p class="muted small">Your name appears on listings and requests. Rental contact details are shared only with the owner and renter.</p>
+      <p id="profileStatus" class="status-message" aria-live="polite"></p>
+      <button type="submit" id="saveProfileButton">Continue as guest</button>
+    </form>
+  </dialog>
+  <dialog id="toolDialog" class="wide-dialog" aria-labelledby="toolDetailTitle">
+    <div class="dialog-heading"><h2 id="toolDetailTitle">Tool details</h2><button class="icon-button" data-close="toolDialog" aria-label="Close tool details" title="Close"><i data-lucide="x" aria-hidden="true"></i></button></div>
+    <div id="toolDetails"></div>
+    <form id="rentForm" class="form-fields">
+      <h3>Choose your dates</h3>
+      <div class="field-row"><label>Pickup date<input id="rentalStart" type="date" required /></label><label>Return date<input id="rentalEnd" type="date" required /></label></div>
+      <p class="muted small">Pickup and return days are both included in the price.</p>
+      <p id="bookingAvailability" class="muted small"></p>
+      <div id="rentalQuote" class="price-summary" aria-live="polite">Choose dates to see the total.</div>
+      <label>Note to the owner <span class="optional">Optional</span><textarea id="rentalMessage" maxlength="2000" rows="3" placeholder="Tell them about your project or preferred pickup time."></textarea></label>
+      <p id="rentStatus" class="status-message" aria-live="polite"></p>
+      <button id="submitRentalButton" type="submit">Send rental request<i data-lucide="arrow-right" aria-hidden="true"></i></button>
+    </form>
+  </dialog>
+  <dialog id="reviewDialog" aria-labelledby="reviewTitle">
+    <div class="dialog-heading"><h2 id="reviewTitle">Review your listing</h2><button class="icon-button" data-close="reviewDialog" aria-label="Close listing review" title="Close"><i data-lucide="x" aria-hidden="true"></i></button></div>
+    <div id="listingPreview"></div><p id="reviewStatus" class="status-message" aria-live="polite"></p>
+    <div class="form-actions"><button id="publishListingButton">Publish listing</button><button class="secondary-button" data-close="reviewDialog">Keep editing</button></div>
+  </dialog>
+  <dialog id="requestDialog" aria-labelledby="requestTitle">
+    <div class="dialog-heading"><h2 id="requestTitle">What tool do you need?</h2><button class="icon-button" data-close="requestDialog" aria-label="Close tool request" title="Close"><i data-lucide="x" aria-hidden="true"></i></button></div>
+    <form id="requestForm" class="form-fields">
+      <label>Tool needed<input id="requestTool" required maxlength="120" placeholder="e.g. Pressure washer" /></label>
+      <div class="field-row"><label>Needed by<input id="requestDate" type="date" required /></label><label>Neighborhood<input id="requestNeighborhood" required maxlength="100" /></label></div>
+      <label>Total budget ($) <span class="optional">Optional</span><input id="requestBudget" type="number" min="0" max="10000" step="0.01" inputmode="decimal" /></label>
+      <label>Details <span class="optional">Optional</span><textarea id="requestNotes" maxlength="2000" rows="3"></textarea></label>
+      <p id="requestStatus" class="status-message" aria-live="polite"></p><button type="submit" id="postRequestButton">Post request</button>
+    </form>
+  </dialog>
+  <dialog id="actionDialog" aria-labelledby="actionTitle">
+    <div class="dialog-heading"><h2 id="actionTitle">Confirm rental</h2><button class="icon-button" data-close="actionDialog" aria-label="Close rental action" title="Close"><i data-lucide="x" aria-hidden="true"></i></button></div>
+    <div id="actionSummary"></div><p id="actionStatus" class="status-message" aria-live="polite"></p>
+    <div class="form-actions"><button id="confirmActionButton">Confirm</button><button class="secondary-button" data-close="actionDialog">Go back</button></div>
+  </dialog>
+  <noscript><p>JavaScript is needed to load shared tools and manage rentals.</p></noscript>
+  <script src="vendor/supabase.js"></script>
+  <script src="vendor/lucide.js"></script>
+  <script src="domain.js"></script>
+  <script src="app.js"></script>
+</body>
 </html>
